@@ -3,7 +3,7 @@ name: Build and Deploy to GKE
 on:
   push:
     branches:
-      - master
+      - master1
 permissions:
   contents: read
   id-token: 'write'      
@@ -44,17 +44,17 @@ jobs:
     # Configure Docker to use the gcloud command-line tool as a credential helper for the Artifact Registry region
     - name: Configure Docker
       run: |
-        gcloud --quiet auth configure-docker "$REGION-docker"
+        gcloud --quiet auth configure-docker "$REGION-docker.pkg.dev"
 
     # Build the Docker image
     - name: Build
       run: |
-        docker build --tag "$REGION-docker/$PROJECT_ID/$GAR_REPOSITORY/$IMAGE:$GITHUB_SHA" .
+        docker build --tag "$REGION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY/$IMAGE:$GITHUB_SHA" .
 
     # Push the Docker image to Artifact Registry
     - name: Publish
       run: |
-        docker push "$REGION-docker/$PROJECT_ID/$GAR_REPOSITORY/$IMAGE:$GITHUB_SHA"
+        docker push "$REGION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY/$IMAGE:$GITHUB_SHA"
 
     # Get the GKE credentials
     - name: Get GKE Credentials
@@ -63,7 +63,7 @@ jobs:
     # Update the deployment with the new image
     - name: Update Deployment Image
       run: |
-        sed -i "s|us-central1-docker/PROJECT_ID/REPOSITORY/IMAGE:TAG|$REGION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY/$IMAGE:$GITHUB_SHA|g" deployment.yaml
+        sed -i "s|us-central1-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE:TAG|$REGION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY/$IMAGE:$GITHUB_SHA|g" deployment.yaml
         kubectl apply -f deployment.yaml
         kubectl apply -f service.yaml
         kubectl rollout status deployment/nodejs-app-deployment
