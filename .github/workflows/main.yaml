@@ -3,7 +3,7 @@ name: Build and Deploy to GKE
 on:
   push:
     branches:
-      - master1
+      - master
 permissions:
   contents: read
   id-token: 'write'      
