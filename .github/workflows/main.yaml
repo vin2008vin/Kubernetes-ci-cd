@@ -10,7 +10,7 @@ permissions:
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  GKE_CLUSTER: cluster-1    # Replace with your cluster name
+  GKE_CLUSTER: kube-cluster-demo    # Replace with your cluster name
   GKE_REGION: us-central1   # Replace with your cluster zone
   REGION: us-central1 # Replace with your Artifact Registry region
   GAR_REPOSITORY: real-world-devops # Replace with your Artifact Registry repository name
@@ -30,8 +30,8 @@ jobs:
     - id: auth
       uses: google-github-actions/auth@v2.0.0  
       with:
-        workload_identity_provider: ''
-        service_account: ''
+        workload_identity_provider: '${{ secrets.GCP_SA_WIP }}'
+        service_account: '${{ secrets.GCP_SA_ACCOUNT }}'
 
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'
